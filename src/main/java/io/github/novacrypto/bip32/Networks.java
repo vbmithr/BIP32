@@ -23,7 +23,7 @@ package io.github.novacrypto.bip32;
 
 public interface Networks {
 
-    Network findByPrivateVersion(int privateVersion);
+    Network findByPrivateVersion(byte[] privateVersion);
 
-    Network findByPublicVersion(int publicVersion);
+    Network findByPublicVersion(byte[] publicVersion);
 }

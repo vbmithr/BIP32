@@ -27,6 +27,8 @@ import io.github.novacrypto.bip32.derivation.Derivation;
 import io.github.novacrypto.bip32.derivation.Derive;
 import org.spongycastle.math.ec.ECPoint;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 
 import static io.github.novacrypto.base58.Base58.base58Encode;
@@ -139,19 +141,29 @@ public final class ExtendedPublicKey implements
     }
 
     public String p2pkhAddress() {
-        return encodeAddress(hdKey.getNetwork().p2pkhVersion(), hdKey.getKey());
+        final byte data[] = new byte[20];
+        hash160into(data, 0, hdKey.getKey());
+        return encodeAddress(hdKey.getNetwork().p2pkhVersion(), data);
     }
 
     public String p2shAddress() {
+        final byte[] data = new byte[20];
         final byte[] script = new byte[22];
         script[1] = (byte) 20;
         hash160into(script, 2, hdKey.getKey());
-        return encodeAddress(hdKey.getNetwork().p2shVersion(), script);
+        hash160into(data, 0, script);
+        return encodeAddress(hdKey.getNetwork().p2shVersion(), data);
     }
 
-    private static String encodeAddress(final byte version, final byte[] data) {
-        final byte[] address = new byte[25];
-        address[0] = version;
+    private static String encodeAddress(final byte[] version, final byte[] data) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(version.length + data.length);
+        try {
+            outputStream.write(version);
+            outputStream.write(data);
+        } catch (IOException e) {
+            // Cannot happen
+        }
+        final byte[] address = outputStream.toByteArray();
         hash160into(address, 1, data);
         System.arraycopy(sha256Twice(address, 0, 21), 0, address, 21, 4);
         return base58Encode(address);

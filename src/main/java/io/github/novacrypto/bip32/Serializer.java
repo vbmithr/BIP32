@@ -57,7 +57,7 @@ final class Serializer {
 
         final byte[] privateKey = new byte[82];
         final ByteArrayWriter writer = new ByteArrayWriter(privateKey);
-        writer.concatSer32(getVersion());
+        writer.concat(getVersion());
         writer.concat((byte) depth);
         writer.concatSer32(fingerprint);
         writer.concatSer32(childNumber);
@@ -72,7 +72,7 @@ final class Serializer {
         return privateKey;
     }
 
-    private int getVersion() {
+    private byte[] getVersion() {
         return neutered ? network.getPublicVersion() : network.getPrivateVersion();
     }
 

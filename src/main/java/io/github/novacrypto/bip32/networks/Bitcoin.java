@@ -26,22 +26,22 @@ import io.github.novacrypto.bip32.Network;
 public enum Bitcoin implements Network {
     MAIN_NET {
         @Override
-        public int getPrivateVersion() {
-            return 0x488ade4;
+        public byte[] getPrivateVersion() {
+            return "\u0488\uade4".getBytes();
         }
 
         @Override
-        public int getPublicVersion() {
+        public byte[] getPublicVersion() {
             return 0x0488b21e;
         }
 
         @Override
-        public byte p2pkhVersion() {
+        public byte[] p2pkhVersion() {
             return 0;
         }
 
         @Override
-        public byte p2shVersion() {
+        public byte[] p2shVersion() {
             return 0x05;
         }
     },
